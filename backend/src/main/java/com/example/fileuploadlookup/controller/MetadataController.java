@@ -6,11 +6,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.example.fileuploadlookup.model.FileMetadata;
 import com.example.fileuploadlookup.service.MetadataService;
+import com.example.fileuploadlookup.model.SaveMetadataRequest;
 
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/metadata")
 public class MetadataController {
     private final MetadataService metadataService;
 
@@ -18,8 +19,13 @@ public class MetadataController {
         this.metadataService = metadataService;
     }
 
-    @PostMapping("/metadata")
-    public FileMetadata saveMetadata(@RequestBody FileMetadata metadata) {
+    @PostMapping
+    public FileMetadata saveMetadata(@RequestBody SaveMetadataRequest request) {
+    
+        FileMetadata metadata = new FileMetadata();
+        metadata.setFileName(request.getFileName());
+        metadata.setS3Key(request.getS3Key());
+    
         return metadataService.saveMetadata(metadata);
     }
 }

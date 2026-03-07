@@ -18,7 +18,6 @@ public class MetadataService {
     public FileMetadata saveMetadata(FileMetadata metadata) {
         metadata.setFileId(UUID.randomUUID().toString());
         metadata.setUploadTime(Instant.now());
-
         dynamoDBRepository.save(metadata);
 
         return metadata;
