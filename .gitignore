@@ -1,0 +1,64 @@
+# OS & editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+*.iml
+
+# Frontend (React) – build & dependencies
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/.next/
+frontend/.parcel-cache/
+frontend/.cache/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.env.local
+frontend/.env.*.local
+
+# Backend (Spring Boot) – build & run
+backend/target/
+backend/build/
+backend/out/
+backend/.gradle/
+backend/*.log
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Terraform – state & providers
+terraform/.terraform/
+#terraform/.terraform.lock.hcl
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/*.tfplan
+terraform/.terraform.tfstate.lock.info
+terraform/crash.log
+terraform/crash.*.log
+terraform/override.tf
+terraform/override.tf.json
+terraform/*_override.tf
+terraform/*_override.tf.json
+
+# Scripts / local
+scripts/*.log
+*.pyc
+__pycache__/
+.venv/
+venv/
+env/
+
+# Logs & temp
+*.log
+tmp/
+temp/
+.cache/
+
+# environment variables
+.env
+.env.*
+
