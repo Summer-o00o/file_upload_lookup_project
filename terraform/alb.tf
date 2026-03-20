@@ -1,3 +1,17 @@
+// get the default VPC and subnets
+data "aws_vpc" "default" {
+  default = true
+}
+
+data "aws_subnets" "default" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
+}
+
+
+
 #create an application load balancer for the backend server
 resource "aws_lb" "backend_alb" {
 
