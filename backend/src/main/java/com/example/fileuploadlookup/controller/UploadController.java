@@ -7,6 +7,7 @@ import com.example.fileuploadlookup.model.S3ServiceResponse;
 import java.util.Map;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/api/upload")
@@ -24,5 +25,9 @@ public class UploadController {
         String fileName = request.get("fileName");
     
         return s3Service.generateUploadUrlAndS3Key(fileName);
+    }
+    @GetMapping("/health")
+    public String healthCheck() {
+        return "Backend is running";
     }
 }

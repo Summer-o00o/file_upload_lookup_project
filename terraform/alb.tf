@@ -19,7 +19,7 @@ resource "aws_lb" "backend_alb" {
   internal           = false
   load_balancer_type = "application"
 
-  security_groups = [aws_security_group.backend_sg.id]
+  security_groups = [aws_security_group.alb_sg.id]
 
   subnets = data.aws_subnets.default.ids
 
@@ -37,7 +37,7 @@ resource "aws_lb_target_group" "backend_tg" {
   vpc_id   = data.aws_vpc.default.id
 
   health_check {
-    path = "/health"
+    path = "/api/upload/health"
     port = "8080"
   }
 
@@ -64,5 +64,29 @@ resource "aws_lb_listener" "http_listener" {
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.backend_tg.arn
+  }
+}
+
+// create a security group for the ALB to allow traffic from the internet
+resource "aws_security_group" "alb_sg" {
+
+  name = "alb-security-group"
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "alb-sg"
   }
 }
