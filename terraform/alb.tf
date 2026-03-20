@@ -39,3 +39,16 @@ resource "aws_lb_target_group_attachment" "backend_attachment" {
   target_id        = aws_instance.backend_server.id
   port             = 8080
 }
+
+// create a listener for ALB to forward the traffic to the backend server
+resource "aws_lb_listener" "http_listener" {
+
+  load_balancer_arn = aws_lb.backend_alb.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.backend_tg.arn
+  }
+}
