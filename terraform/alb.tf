@@ -16,7 +16,7 @@ data "aws_subnets" "default" {
 resource "aws_lb" "backend_alb" {
 
   name               = "file-upload-alb"
-  internal           = false
+  internal           = true
   load_balancer_type = "application"
 
   security_groups = [aws_security_group.alb_sg.id]
@@ -76,7 +76,7 @@ resource "aws_security_group" "alb_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [aws_security_group.vpc_link_sg.id]
   }
 
   egress {
@@ -88,5 +88,21 @@ resource "aws_security_group" "alb_sg" {
 
   tags = {
     Name = "alb-sg"
+  }
+}
+
+// create a security group for the VPC link
+resource "aws_security_group" "vpc_link_sg" {
+  name = "vpc-link-sg"
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "vpc-link-sg"
   }
 }

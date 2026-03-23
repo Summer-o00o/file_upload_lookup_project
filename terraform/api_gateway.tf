@@ -14,24 +14,31 @@ resource "aws_apigatewayv2_integration" "file_lookup_integration" {
 }
 
 #route for the file lookup service
-resource "aws_apigatewayv2_route" "get_files_route" {
+# resource "aws_apigatewayv2_route" "get_files_route" {
 
-  api_id = aws_apigatewayv2_api.file_service_api.id
-  route_key = "GET /api/files"
-  target = "integrations/${aws_apigatewayv2_integration.file_lookup_integration.id}"
-}
+#   api_id = aws_apigatewayv2_api.file_service_api.id
+#   route_key = "GET /api/files"
+#   target = "integrations/${aws_apigatewayv2_integration.file_lookup_integration.id}"
+# }
 
-// route for the upload url service
-resource "aws_apigatewayv2_route" "post_upload_url_route" {
+# route for the upload url service
+# resource "aws_apigatewayv2_route" "post_upload_url_route" {
+#   api_id    = aws_apigatewayv2_api.file_service_api.id
+#   route_key = "POST /api/upload/url"
+#   target    = "integrations/${aws_apigatewayv2_integration.backend_alb_integration.id}"
+# }
+
+# route for the metadata service
+# resource "aws_apigatewayv2_route" "post_metadata_route" {
+#   api_id    = aws_apigatewayv2_api.file_service_api.id
+#   route_key = "POST /api/metadata"
+#   target    = "integrations/${aws_apigatewayv2_integration.backend_alb_integration.id}"
+# }
+
+# route for the backend proxy to forward the traffic to the backend server
+resource "aws_apigatewayv2_route" "backend_proxy_route" {
   api_id    = aws_apigatewayv2_api.file_service_api.id
-  route_key = "POST /api/upload/url"
-  target    = "integrations/${aws_apigatewayv2_integration.backend_alb_integration.id}"
-}
-
-// route for the metadata service
-resource "aws_apigatewayv2_route" "post_metadata_route" {
-  api_id    = aws_apigatewayv2_api.file_service_api.id
-  route_key = "POST /api/metadata"
+  route_key = "ANY /api/{proxy+}"
   target    = "integrations/${aws_apigatewayv2_integration.backend_alb_integration.id}"
 }
 
@@ -49,5 +56,14 @@ resource "aws_apigatewayv2_integration" "backend_alb_integration" {
   integration_type       = "HTTP_PROXY"
   integration_method     = "ANY"
   integration_uri        = aws_lb_listener.http_listener.arn
+  connection_type        = "VPC_LINK"
+  connection_id          = aws_apigatewayv2_vpc_link.backend_vpc_link.id
   payload_format_version = "1.0"
+}
+
+// vpc link for the backend ALB to forward the traffic to the backend server
+resource "aws_apigatewayv2_vpc_link" "backend_vpc_link" {
+  name               = "backend-vpc-link"
+  security_group_ids = [aws_security_group.vpc_link_sg.id]
+  subnet_ids         = data.aws_subnets.default.ids
 }

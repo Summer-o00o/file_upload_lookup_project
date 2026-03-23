@@ -41,3 +41,59 @@ resource "aws_iam_role_policy" "lambda_dynamodb_read" {
     ]
   })
 }
+
+// create a iam role for the ec2 instance
+resource "aws_iam_role" "ec2_backend_role" {
+  name = "file_upload_backend_ec2_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+// create a policy for the ec2 instance to access the s3 bucket and dynamodb table
+resource "aws_iam_role_policy" "ec2_backend_policy" {
+  name = "ec2_backend_policy"
+  role = aws_iam_role.ec2_backend_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          aws_s3_bucket.file_upload_bucket.arn,
+          "${aws_s3_bucket.file_upload_bucket.arn}/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:PutItem"
+        ]
+        Resource = aws_dynamodb_table.file_metadata.arn
+      }
+    ]
+  })
+}
+
+// create a instance profile for the ec2 instance
+// the instance profile is used to attach the iam role to the ec2 instance
+resource "aws_iam_instance_profile" "ec2_instance_profile" {
+  name = "file_upload_backend_instance_profile"
+  role = aws_iam_role.ec2_backend_role.name
+}
