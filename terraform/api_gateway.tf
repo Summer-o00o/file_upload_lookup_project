@@ -7,9 +7,9 @@ resource "aws_apigatewayv2_api" "file_service_api" {
 #integration for the file lookup service
 resource "aws_apigatewayv2_integration" "file_lookup_integration" {
 
-  api_id = aws_apigatewayv2_api.file_service_api.id
-  integration_type = "AWS_PROXY"
-  integration_uri  = aws_lambda_function.file_lookup.invoke_arn
+  api_id             = aws_apigatewayv2_api.file_service_api.id
+  integration_type   = "AWS_PROXY"
+  integration_uri    = aws_lambda_function.file_lookup.invoke_arn
   integration_method = "POST"
 }
 
@@ -45,8 +45,8 @@ resource "aws_apigatewayv2_route" "backend_proxy_route" {
 #stage for the api gateway
 resource "aws_apigatewayv2_stage" "default_stage" {
 
-  api_id = aws_apigatewayv2_api.file_service_api.id
-  name = "$default"
+  api_id      = aws_apigatewayv2_api.file_service_api.id
+  name        = "$default"
   auto_deploy = true
 }
 
@@ -59,11 +59,4 @@ resource "aws_apigatewayv2_integration" "backend_alb_integration" {
   connection_type        = "VPC_LINK"
   connection_id          = aws_apigatewayv2_vpc_link.backend_vpc_link.id
   payload_format_version = "1.0"
-}
-
-// vpc link for the backend ALB to forward the traffic to the backend server
-resource "aws_apigatewayv2_vpc_link" "backend_vpc_link" {
-  name               = "backend-vpc-link"
-  security_group_ids = [aws_security_group.vpc_link_sg.id]
-  subnet_ids         = data.aws_subnets.default.ids
 }

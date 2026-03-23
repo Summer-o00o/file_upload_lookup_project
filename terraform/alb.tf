@@ -1,13 +1,6 @@
-// get the default VPC and subnets
+// get the default VPC
 data "aws_vpc" "default" {
   default = true
-}
-
-data "aws_subnets" "default" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.default.id]
-  }
 }
 
 
@@ -73,9 +66,9 @@ resource "aws_security_group" "alb_sg" {
   name = "alb-security-group"
 
   ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
     security_groups = [aws_security_group.vpc_link_sg.id]
   }
 
@@ -88,21 +81,5 @@ resource "aws_security_group" "alb_sg" {
 
   tags = {
     Name = "alb-sg"
-  }
-}
-
-// create a security group for the VPC link
-resource "aws_security_group" "vpc_link_sg" {
-  name = "vpc-link-sg"
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "vpc-link-sg"
   }
 }
