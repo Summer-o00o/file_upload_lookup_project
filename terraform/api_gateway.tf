@@ -2,6 +2,13 @@
 resource "aws_apigatewayv2_api" "file_service_api" {
   name          = "file_service_api"
   protocol_type = "HTTP"
+
+// cors configuration for the api gateway
+  cors_configuration {
+    allow_origins = ["*"]
+    allow_methods = ["GET", "POST", "PUT", "OPTIONS"]
+    allow_headers = ["*"]
+  }
 }
 
 #integration for the file lookup service
@@ -14,26 +21,13 @@ resource "aws_apigatewayv2_integration" "file_lookup_integration" {
 }
 
 #route for the file lookup service
-# resource "aws_apigatewayv2_route" "get_files_route" {
+# has to keep this because if not,  the request will be forwarded to the ALB, EC2 instead of the lambda
+resource "aws_apigatewayv2_route" "get_files_route" {
 
-#   api_id = aws_apigatewayv2_api.file_service_api.id
-#   route_key = "GET /api/files"
-#   target = "integrations/${aws_apigatewayv2_integration.file_lookup_integration.id}"
-# }
-
-# route for the upload url service
-# resource "aws_apigatewayv2_route" "post_upload_url_route" {
-#   api_id    = aws_apigatewayv2_api.file_service_api.id
-#   route_key = "POST /api/upload/url"
-#   target    = "integrations/${aws_apigatewayv2_integration.backend_alb_integration.id}"
-# }
-
-# route for the metadata service
-# resource "aws_apigatewayv2_route" "post_metadata_route" {
-#   api_id    = aws_apigatewayv2_api.file_service_api.id
-#   route_key = "POST /api/metadata"
-#   target    = "integrations/${aws_apigatewayv2_integration.backend_alb_integration.id}"
-# }
+  api_id = aws_apigatewayv2_api.file_service_api.id
+  route_key = "GET /api/files"
+  target = "integrations/${aws_apigatewayv2_integration.file_lookup_integration.id}"
+}
 
 # route for the backend proxy to forward the traffic to the backend server
 resource "aws_apigatewayv2_route" "backend_proxy_route" {
