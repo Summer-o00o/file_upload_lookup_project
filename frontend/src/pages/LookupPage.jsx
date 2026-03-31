@@ -18,19 +18,43 @@ export default function LookupPage() {
   }, []);
 
   return (
-    <div>
-      <h2>Uploaded Files</h2>
-      {files.length === 0 ? (
-        <p>No files found.</p>
-      ) : (
-        <ul>
-          {files.map((file) => (
-            <li key={file.fileId}>
-              <strong>{file.fileName}</strong> — {file.s3Key}
-            </li>
-          ))}
-        </ul>
-      )}
+    <div className="page">
+      <div className="container">
+        <header className="app-header">
+          <h1 className="title">Uploaded Files</h1>
+          <p className="subtitle">Browse the latest uploads stored in S3.</p>
+        </header>
+
+        <section className="card">
+          <div className="card-body">
+            {files.length === 0 ? (
+              <p className="empty">No files found.</p>
+            ) : (
+              <ul className="file-list">
+                {files.map((file) => (
+                  <li key={file.fileId} className="file-row">
+                    <div className="file-meta">
+                      <div className="file-name">{file.fileName}</div>
+                      <div className="file-id">{file.fileId}</div>
+                    </div>
+
+                    <div className="actions">
+                      <a
+                        className="btn btn-primary"
+                        href={`https://file-upload-lookup-bucket.s3.us-west-2.amazonaws.com/${file.s3Key}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        View file
+                      </a>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
