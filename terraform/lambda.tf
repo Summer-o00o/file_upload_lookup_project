@@ -1,3 +1,4 @@
+# file lookup lambda function
 resource "aws_lambda_function" "file_lookup" {
 
   function_name = "file_lookup_lambda"
@@ -17,6 +18,7 @@ resource "aws_lambda_function" "file_lookup" {
   }
 }
 
+# allow the api gateway to invoke the file lookup lambda function
 resource "aws_lambda_permission" "allow_apigateway_invoke" {
 
   statement_id  = "AllowAPIGatewayInvoke"
@@ -25,4 +27,25 @@ resource "aws_lambda_permission" "allow_apigateway_invoke" {
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_apigatewayv2_api.file_service_api.execution_arn}/*/*"
+}
+
+
+# stream notification lambda function
+resource "aws_lambda_function" "stream_notification" {
+  function_name = "stream_notification_lambda"
+
+  runtime = "python3.11"
+  handler = "handler.lambda_handler"
+
+  role = aws_iam_role.lambda_execution_role.arn
+
+  filename         = "${path.module}/../lambdas/stream-notification/function.zip"
+  source_code_hash = filebase64sha256("${path.module}/../lambdas/stream-notification/function.zip")
+}
+
+# map the stream notification lambda function to the dynamodb table
+resource "aws_lambda_event_source_mapping" "stream_notification_mapping" {
+  event_source_arn  = aws_dynamodb_table.file_metadata.stream_arn
+  function_name     = aws_lambda_function.stream_notification.arn
+  starting_position = "LATEST"
 }

@@ -97,3 +97,25 @@ resource "aws_iam_instance_profile" "ec2_instance_profile" {
   name = "file_upload_backend_instance_profile"
   role = aws_iam_role.ec2_backend_role.name
 }
+
+# create a policy for the lambda function to read the stream from the dynamodb table
+resource "aws_iam_role_policy" "lambda_dynamodb_stream_read" {
+  name = "lambda_dynamodb_stream_read_policy"
+  role = aws_iam_role.lambda_execution_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:GetRecords",
+          "dynamodb:GetShardIterator",
+          "dynamodb:DescribeStream",
+          "dynamodb:ListStreams"
+        ]
+        Resource = aws_dynamodb_table.file_metadata.stream_arn
+      }
+    ]
+  })
+}

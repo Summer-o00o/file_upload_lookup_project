@@ -10,7 +10,12 @@ resource "aws_dynamodb_table" "file_metadata" {
     type = "S"
   }
 
+  # enable stream
+  stream_enabled   = true
+  stream_view_type = "NEW_IMAGE"
+
   tags = {
     Project = "file-upload-lookup"
   }
+
 }
