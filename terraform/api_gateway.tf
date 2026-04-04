@@ -6,9 +6,14 @@ resource "aws_apigatewayv2_api" "file_service_api" {
 // cors configuration for the api gateway
   cors_configuration {
     allow_origins = ["*"]
-    allow_methods = ["GET", "POST", "PUT", "OPTIONS"]
+    allow_methods = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
     allow_headers = ["*"]
   }
+}
+
+locals {
+  # ANY would forward OPTIONS to the ALB and break browser CORS preflight; list verbs explicitly.
+  backend_proxy_http_methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
 }
 
 #integration for the file lookup service
@@ -29,10 +34,12 @@ resource "aws_apigatewayv2_route" "get_files_route" {
   target = "integrations/${aws_apigatewayv2_integration.file_lookup_integration.id}"
 }
 
-# route for the backend proxy to forward the traffic to the backend server
+# Backend proxy: same ALB integration per method, but not ANY (OPTIONS must not hit EC2; API GW CORS handles preflight).
 resource "aws_apigatewayv2_route" "backend_proxy_route" {
+  for_each = toset(local.backend_proxy_http_methods)
+
   api_id    = aws_apigatewayv2_api.file_service_api.id
-  route_key = "ANY /api/{proxy+}"
+  route_key = "${each.key} /api/{proxy+}"
   target    = "integrations/${aws_apigatewayv2_integration.backend_alb_integration.id}"
 }
 

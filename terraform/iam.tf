@@ -119,3 +119,23 @@ resource "aws_iam_role_policy" "lambda_dynamodb_stream_read" {
     ]
   })
 }
+
+// create a policy for the lambda function to publish to the sns topic
+// this is used to send email notifications when a new file is uploaded
+resource "aws_iam_role_policy" "lambda_sns_publish" {
+  name = "lambda_sns_publish_policy"
+  role = aws_iam_role.lambda_execution_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "sns:Publish"
+        ]
+        Resource = aws_sns_topic.file_upload_notifications.arn
+      }
+    ]
+  })
+}

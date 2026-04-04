@@ -41,6 +41,13 @@ resource "aws_lambda_function" "stream_notification" {
 
   filename         = "${path.module}/../lambdas/stream-notification/function.zip"
   source_code_hash = filebase64sha256("${path.module}/../lambdas/stream-notification/function.zip")
+
+// pass the sns topic arn to the lambda function
+  environment {
+    variables = {
+      TOPIC_ARN = aws_sns_topic.file_upload_notifications.arn
+    } 
+  }
 }
 
 # map the stream notification lambda function to the dynamodb table
