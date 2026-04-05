@@ -13,8 +13,8 @@ This project lets users upload files to S3 and look up previously uploaded files
 - [API endpoints](#api-endpoints)
 - [Configuration notes](#configuration-notes)
 - [Deployment notes](#deployment-notes)
+- [Terraform setup](#terraform-setup)
 - [Known limitations](#known-limitations)
-- [Build outputs (ignored by git)](#build-outputs-ignored-by-git)
 
 ## Structure
 
@@ -250,14 +250,6 @@ The infrastructure is mostly defined in Terraform, but application deployment is
 - S3 CORS currently allows only `http://localhost:5173`, so additional frontend origins need Terraform changes.
 - Several environment-specific values are hardcoded, including bucket names, table names, and the SNS subscription email.
 - Deployment automation is incomplete because the repo includes placeholder helper scripts rather than a full release pipeline.
-
-## Build outputs (ignored by git)
-
-- Frontend: `node_modules/`, `build/`, `dist/`
-- Backend: `target/`, `build/`, `out/`
-- Terraform: `.terraform/`, `*.tfstate`, `*.tfplan`
-
-See `.gitignore` for the full list.
 
 ## Terraform setup
 
