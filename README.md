@@ -192,7 +192,7 @@ flowchart LR
 
 ## Configuration notes
 
-The current project uses several values directly in source or Terraform instead of environment-driven configuration:
+The current project mixes hardcoded values with a few Terraform-managed inputs:
 
 | Setting | Current value | Where it is defined |
 | --- | --- | --- |
@@ -200,10 +200,10 @@ The current project uses several values directly in source or Terraform instead 
 | API base URL | `https://z07qmg52sb.execute-api.us-west-2.amazonaws.com` | `frontend/src/services/fileUploadService.js` |
 | S3 bucket | `file-upload-lookup-bucket` | Terraform and backend `S3Service` |
 | DynamoDB table | `file_metadata` | Terraform, backend repository, and Lambda handlers |
-| SNS email subscription | `<your-email>` | `terraform/sns.tf` |
+| SNS email subscription | `sns_subscription_email` input | `terraform/sns.tf`, `terraform/variables.tf`, `terraform/terraform.tfvars.example` |
 | Allowed S3 CORS origin | `http://localhost:5173` | `terraform/s3.tf` |
 
-If you fork this project or deploy a second copy, these are the first values you will likely want to parameterize.
+If you fork this project or deploy a second copy, the API base URL, bucket and table names, region assumptions, and CORS origins are the first values you will likely want to parameterize further.
 
 ## Deployment notes
 
@@ -248,7 +248,7 @@ The infrastructure is mostly defined in Terraform, but application deployment is
 - The frontend hardcodes both the API Gateway base URL and the public S3 bucket URL pattern, so switching environments is manual.
 - The lookup Lambda uses a DynamoDB `scan`, which is fine for a demo but will not scale well for large datasets.
 - S3 CORS currently allows only `http://localhost:5173`, so additional frontend origins need Terraform changes.
-- Several environment-specific values are hardcoded, including bucket names, table names, and the SNS subscription email.
+- Several environment-specific values are still hardcoded, including bucket names, table names, and region assumptions.
 - Deployment automation is incomplete because the repo includes placeholder helper scripts rather than a full release pipeline.
 
 ## Terraform setup
