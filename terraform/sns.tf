@@ -8,5 +8,5 @@ resource "aws_sns_topic" "file_upload_notifications" {
 resource "aws_sns_topic_subscription" "email_notifications" {
   topic_arn = aws_sns_topic.file_upload_notifications.arn
   protocol  = "email"
-  endpoint  = "<your-email>"
+  endpoint  = var.sns_subscription_email
 }
