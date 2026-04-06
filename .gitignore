@@ -36,6 +36,8 @@ terraform/.terraform/
 terraform/*.tfstate
 terraform/*.tfstate.*
 terraform/*.tfplan
+terraform/*.tfvars
+terraform/*.tfvars.json
 terraform/.terraform.tfstate.lock.info
 terraform/crash.log
 terraform/crash.*.log
@@ -61,4 +63,3 @@ temp/
 # environment variables
 .env
 .env.*
-
