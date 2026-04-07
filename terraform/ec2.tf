@@ -24,9 +24,9 @@ resource "aws_instance" "backend_server" {
 resource "aws_security_group" "backend_sg" {
 
   name = "backend-security-group"
-  #allow http traffic to the instance
+  # allow app port only from the ALB (not from the public internet)
   ingress {
-    description     = "Allow HTTP from anywhere"
+    description     = "Allow HTTP from ALB only"
     from_port       = 8080
     to_port         = 8080
     protocol        = "tcp"

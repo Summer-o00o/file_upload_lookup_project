@@ -5,7 +5,7 @@ resource "aws_apigatewayv2_api" "file_service_api" {
 
 // cors configuration for the api gateway
   cors_configuration {
-    allow_origins = ["*"]
+    allow_origins = local.frontend_cors_origins
     allow_methods = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
     allow_headers = ["*"]
   }

@@ -13,7 +13,7 @@ resource "aws_s3_bucket_cors_configuration" "file_upload_bucket_cors" {
   cors_rule {
     allowed_headers = ["*"]
     allowed_methods = ["PUT", "GET", "HEAD"]
-    allowed_origins = ["http://localhost:5173"]
+    allowed_origins = local.frontend_cors_origins
     expose_headers  = ["ETag"]
     max_age_seconds = 3000
   }
